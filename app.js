@@ -59,6 +59,10 @@ bot.hears(/[Rr][Aa][Nn][Kk][Ii][Nn][Gg]$/, (ctx) => {
     ranking(ctx);
 });
 
+bot.hears(/\b[Cc][Oo]\b/, (ctx) => {
+    ctx.reply("Co", { reply_to_message_id: ctx.message.message_id });
+});
+
 bot.startPolling();
 
 /* -------------------------------------------------------------------------- */
