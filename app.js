@@ -14,6 +14,9 @@ const bronce = require("./lib").bronce;
 const addParty = require("./lib").addParty;
 const addUser = require("./lib").addUser;
 const ranking = require("./lib").ranking;
+const msg = require("./lib").msg;
+const endWord = require("./lib").endWord;
+const word = require("./lib").word;
 
 /* -------------------------------------------------------------------------- */
 /*                                   GLOBALS                                  */
@@ -57,44 +60,44 @@ bot.command('start', ctx => {
     bot.telegram.sendMessage(ctx.message.chat.id, '¡Olé!');
 });
 
-bot.hears('holi', (ctx) => {
+bot.hears(msg("holi"), (ctx) => {
     ctx.telegram.sendMessage(ctx.message.chat.id, `Holi ${ctx.from.first_name} :D`)
 });
 
-bot.hears(/^[Pp][Oo][Ll][Ee]$/, (ctx) => {
+bot.hears(msg("pole"), (ctx) => {
     pole(ctx);
 });
 
-bot.hears(/^[Oo][Rr][Oo]$/, (ctx) => {
+bot.hears(msg("oro"), (ctx) => {
     pole(ctx);
 });
 
-bot.hears(/^[Ss][Uu][Bb][Pp][Oo][Ll][Ee]$/, (ctx) => {
+bot.hears(msg("subpole"), (ctx) => {
     subpole(ctx);
 });
 
-bot.hears(/^[Pp][Ll][Aa][Tt][Aa]$/, (ctx) => {
+bot.hears(msg("plata"), (ctx) => {
     subpole(ctx);
 });
 
-bot.hears(/^[Bb][Rr][Oo][Nn][Cc][Ee]$/, (ctx) => {
+bot.hears(msg("bronce"), (ctx) => {
     bronce(ctx);
 });
 
-bot.hears(/^[Ff][Aa][Ii][Ll]$/, (ctx) => {
+bot.hears(msg("fail"), (ctx) => {
     bronce(ctx);
 });
 
-bot.hears(/[Rr][Aa][Nn][Kk][Ii][Nn][Gg]$/, (ctx) => {
+bot.hears(msg("ranking"), (ctx) => {
     ranking(ctx);
 });
 
-bot.hears(/\b[Cc][Oo]$/, (ctx) => {
+bot.hears(endWord("co"), (ctx) => {
     let randomResponse = coResponses[Math.round(Math.random()*(coResponses.length - 1))];
     ctx.reply(randomResponse, { reply_to_message_id: ctx.message.message_id });
 });
 
-bot.hears(/\b[Pp][Ii][Ll][Aa][Rr][Ii][Cc][Aa]\b/, (ctx) => {
+bot.hears(word("pilarica"), (ctx) => {
     ctx.reply("🤮", { reply_to_message_id: ctx.message.message_id });
 });
 

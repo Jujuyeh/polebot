@@ -127,11 +127,55 @@ function addParty(ctx) {
     newParty(chat);
 }
 
+/* -------------------------------------------------------------------------- */
+/*                             STRING MANIPULATION                            */
+/* -------------------------------------------------------------------------- */
+
+function cases(str) {
+    let cases = ""
+    for (var i = 0; i < str.length; i++) {
+        let c = str.charAt(i);
+        cases += `[${c.toUpperCase()}${c.toLowerCase()}]`
+    }
+    return cases;
+}
+
+function msg(str) {
+    return new RegExp(`^${cases(str)}$`,'g');
+}
+
+function word(str) {
+    return new RegExp(`\b${cases(str)}\b`,'g');
+}
+
+function contains(str) {
+    return new RegExp(`${cases(str)}`,'g');
+}
+
+function startsWith(str) {
+    return new RegExp(`^${cases(str)}`,'g');
+}
+
+function startWord(str) {
+    return new RegExp(`^${cases(str)}\b`,'g');
+}
+
+function endsWith(str) {
+    return new RegExp(`${cases(str)}$`,'g');
+}
+
+function endWord(str) {
+    return new RegExp(`\b${cases(str)}$`,'g');
+}
+
 module.exports = {
     pole,
     subpole,
     bronce,
     addUser,
     addParty,
-    ranking
+    ranking,
+    msg,
+    word,
+    endWord
 };
