@@ -1,17 +1,4 @@
-var newParty = require('./set').newParty;
-var newUser = require('./set').newUser;
-var getRanking = require('./get').getRanking;
-var getParty = require('./get').getParty;
-var setParty = require('./set').setParty;
-var getUser = require('./get').getUser;
-var score = require('./set').score;
+import { newParty, newUser, setParty, score } from "./set.js";
+import { getRanking, getParty, getUser } from "./get.js";
 
-module.exports = {
-    newParty,
-    newUser,
-    getRanking,
-    getParty,
-    setParty,
-    getUser,
-    score
-};
+export { newParty, newUser, setParty, score, getRanking, getParty, getUser };

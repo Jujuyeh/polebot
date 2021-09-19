@@ -1,10 +1,6 @@
-var User = require('../../models/User.js').User;
-var Party = require('../../models/User.js').Party;
-var getGroupById = require('./get').getGroupById;
-var getMemberIdsFromGroup = require('./get').getMemberIdsFromGroup;
-var to = require('await-to-js').to;
+import { User, Party } from "../../models/User.js";
 
-async function newParty(id) {
+export async function newParty(id) {
     return new Promise(async (resolve, _) => {
         const party = await Party.findById(id);
 
@@ -15,17 +11,17 @@ async function newParty(id) {
         return resolve(
             await Party.create({
                 _id: id,
-                current: 'none',
-                last_set: new Date(0) / 1000
+                current: "none",
+                last_set: new Date(0) / 1000,
             })
-        )
-    })
+        );
+    });
 }
 
-async function newUser(username, chat) {
+export async function newUser(username, chat) {
     const user = await User.findOne({
         username: username,
-        chat: chat
+        chat: chat,
     });
 
     if (user) {
@@ -33,40 +29,36 @@ async function newUser(username, chat) {
     }
 
     return new Promise(async (resolve, _) => {
-
         return resolve(
             await User.create({
                 username: username,
                 chat: chat,
                 score: 0.0,
-                last_set: new Date(0)
+                last_set: new Date(0),
             })
-        )
-    })
+        );
+    });
 }
 
-async function setParty(id, newstatus, newdate) {
+export async function setParty(id, newstatus, newdate) {
     return new Promise(async (resolve, _) => {
-
         const filter = {
-            "_id": id,
+            _id: id,
         };
         const update = {
             current: newstatus,
-            last_set: newdate
+            last_set: newdate,
         };
 
-        return resolve(
-            await Party.findOneAndUpdate(filter, update)
-        );
-    })
+        return resolve(await Party.findOneAndUpdate(filter, update));
+    });
 }
 
-async function score(username, chat, value) {
+export async function score(username, chat, value) {
     return new Promise(async (resolve, _) => {
         const filter = {
-            "username": username,
-            "chat": chat
+            username: username,
+            chat: chat,
         };
 
         const user = await User.findOne(filter);
@@ -77,19 +69,10 @@ async function score(username, chat, value) {
 
         const update = {
             $inc: {
-                score: value
-            }
-        }
+                score: value,
+            },
+        };
 
-        return resolve(
-            await User.findOneAndUpdate(filter, update)
-        );
-    })
+        return resolve(await User.findOneAndUpdate(filter, update));
+    });
 }
-
-module.exports = {
-    newParty,
-    newUser,
-    setParty,
-    score
-};

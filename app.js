@@ -6,17 +6,22 @@
  */
 
 /* --------------------------------- IMPORTS -------------------------------- */
-const Telegraf = require('telegraf');
-const mongoose = require('mongoose');
-const pole = require("./lib").pole;
-const subpole = require("./lib").subpole;
-const bronce = require("./lib").bronce;
-const addParty = require("./lib").addParty;
-const addUser = require("./lib").addUser;
-const ranking = require("./lib").ranking;
-const msg = require("./lib").msg;
-const endWord = require("./lib").endWord;
-const word = require("./lib").word;
+import { Telegraf as _Telegraf } from "telegraf";
+
+import pkg from "mongoose";
+const { connect } = pkg;
+
+import {
+    pole,
+    subpole,
+    bronce,
+    addParty,
+    ranking,
+    msg,
+    endWord,
+    word,
+    getBusTimes
+} from "./lib/index.js";
 
 /* -------------------------------------------------------------------------- */
 /*                                   GLOBALS                                  */
@@ -33,35 +38,38 @@ const coResponses = [
     "nfinamiento",
     "vid",
     "baya",
-    "jan"
-]
+    "jan",
+];
 
 /* -------------------------------------------------------------------------- */
 /*                                  DATABASE                                  */
 /* -------------------------------------------------------------------------- */
 
-mongoose
-    .connect(
-        `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/polebot`, {
-            useNewUrlParser: true
-        }
-    )
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+connect(
+    `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/polebot`,
+    {
+        useNewUrlParser: true,
+    }
+)
+    .then(() => console.log("MongoDB Connected"))
+    .catch((err) => console.log(err));
 
 /* -------------------------------------------------------------------------- */
 /*                                     BOT                                    */
 /* -------------------------------------------------------------------------- */
 
-const bot = new Telegraf.Telegraf(process.env.BOT_TOKEN);
+const bot = new _Telegraf(process.env.BOT_TOKEN);
 
-bot.command('start', ctx => {
+bot.command("start", (ctx) => {
     addParty(ctx);
-    bot.telegram.sendMessage(ctx.message.chat.id, '¡Olé!');
+    bot.telegram.sendMessage(ctx.message.chat.id, "¡Olé!");
 });
 
 bot.hears(msg("holi"), (ctx) => {
-    ctx.telegram.sendMessage(ctx.message.chat.id, `Holi ${ctx.from.first_name} :D`)
+    ctx.telegram.sendMessage(
+        ctx.message.chat.id,
+        `Holi ${ctx.from.first_name} :D`
+    );
 });
 
 bot.hears(msg("pole"), (ctx) => {
@@ -93,8 +101,15 @@ bot.hears(msg("ranking"), (ctx) => {
 });
 
 bot.hears(endWord("co"), (ctx) => {
-    let randomResponse = coResponses[Math.round(Math.random()*(coResponses.length - 1))];
-    ctx.reply(randomResponse, { reply_to_message_id: ctx.message.message_id });
+    if (ctx.message.text.match(msg("co"))) {
+        ctx.replyWithVoice({
+            source: "./assets/cacola.mp3",
+        });
+    } else {
+        let randomResponse =
+            coResponses[Math.round(Math.random() * (coResponses.length - 1))];
+        ctx.reply(randomResponse, { reply_to_message_id: ctx.message.message_id });
+    }
 });
 
 bot.hears(word("pilarica"), (ctx) => {
@@ -102,17 +117,21 @@ bot.hears(word("pilarica"), (ctx) => {
 });
 
 bot.hears(/^[Ss][Aa]+[Rr][Aa]+$/, (ctx) => {
-    let charRepeatFirst = ctx.message.text.match(/[Ss][Aa]+/)[0].length - 1;
-    let charRepeatSecond = ctx.message.text.match(/[Rr][Aa]+/)[0].length - 1;
+    let firstChar = ctx.message.text.match(/[Ss][Aa]+/)[0].length - 1;
+    let secondChar = ctx.message.text.match(/[Rr][Aa]+/)[0].length - 1;
     const charO = "o";
     const charA = "a";
-    let response = `g${"o".repeat(charRepeatFirst)}s${"a".repeat(charRepeatSecond)}`;
+    let response = `g${"o".repeat(firstChar)}s${"a".repeat(secondChar)}`;
     ctx.reply(response, { reply_to_message_id: ctx.message.message_id });
+});
+
+bot.hears(/bus[0-9]+/, (ctx) => {
+    getBusTimes(ctx);
 });
 
 bot.startPolling();
 
 /* -------------------------------------------------------------------------- */
 // Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
