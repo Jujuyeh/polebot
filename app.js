@@ -20,7 +20,8 @@ import {
     msg,
     endWord,
     word,
-    getBusTimes
+    getBusTimes,
+    getTramTimes
 } from "./lib/index.js";
 
 /* -------------------------------------------------------------------------- */
@@ -127,6 +128,10 @@ bot.hears(/^[Ss][Aa]+[Rr][Aa]+$/, (ctx) => {
 
 bot.hears(/bus[0-9]+/, (ctx) => {
     getBusTimes(ctx);
+});
+
+bot.hears(/\/tram/, (ctx) => {
+    getTramTimes(ctx);
 });
 
 bot.startPolling();
