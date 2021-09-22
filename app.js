@@ -7,6 +7,7 @@
 
 /* --------------------------------- IMPORTS -------------------------------- */
 import { Telegraf as _Telegraf } from "telegraf";
+import { MenuTemplate, MenuMiddleware } from "telegraf-inline-menu";
 
 import pkg from "mongoose";
 const { connect } = pkg;
@@ -21,7 +22,13 @@ import {
     endWord,
     word,
     getBusTimes,
-    getTramTimes
+    getTramTimes,
+    getNearBusTimes,
+    getNearTramTimes,
+    getNearBike,
+    getNearPharmacy,
+    getNearWater,
+    setLoc,
 } from "./lib/index.js";
 
 /* -------------------------------------------------------------------------- */
@@ -109,7 +116,9 @@ bot.hears(endWord("co"), (ctx) => {
     } else {
         let randomResponse =
             coResponses[Math.round(Math.random() * (coResponses.length - 1))];
-        ctx.reply(randomResponse, { reply_to_message_id: ctx.message.message_id });
+        ctx.reply(randomResponse, {
+            reply_to_message_id: ctx.message.message_id,
+        });
     }
 });
 
@@ -134,9 +143,40 @@ bot.hears(/\/tram/, (ctx) => {
     getTramTimes(ctx);
 });
 
-bot.startPolling();
+/* -------------------------------- LOCATION -------------------------------- */
+const menuTemplate = new MenuTemplate((_) => `Buscar cerca de esa ubicación:`);
+
+const locOptions = {
+    "Parada de autobús": (x) => getNearBusTimes(x),
+    "Parada de tranvía": (x) => getNearTramTimes(x),
+    Bizi: (x) => getNearBike(x),
+    Farmacia: (x) => getNearPharmacy(x),
+    "Fuentes de agua": (x) => getNearWater(x),
+};
+
+menuTemplate.choose("Location Service", Object.keys(locOptions), {
+    columns: 2,
+    maxRows: 3,
+    do: (ctx, key) => {
+        locOptions[key](ctx.callbackQuery.message.chat.id);
+        return true;
+    },
+});
+
+const menuMiddleware = new MenuMiddleware("/", menuTemplate);
+
+bot.on("message", (ctx) => {
+    if (ctx.message.location && ctx.message.chat.type === "private") {
+        setLoc(ctx);
+        menuMiddleware.replyToContext(ctx);
+    }
+});
+
+bot.use(menuMiddleware);
 
 /* -------------------------------------------------------------------------- */
+bot.startPolling();
+
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
