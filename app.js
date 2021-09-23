@@ -51,7 +51,7 @@ const coResponses = [
 
 // Help message
 const help = `
-ℹ️ℹ️ℹ️ *Auyda con Polebot* ℹ️ℹ️ℹ️
+ℹ️ℹ️ℹ️ *Ayuda con Polebot* ℹ️ℹ️ℹ️
 
 Con este bot podrás jugar a la _pole_, añádelo a un grupo para jugar. También te permite consultar diferentes servicios de Zaragoza, como tiempos de paso de buses, tranvía y más.
 
@@ -95,7 +95,7 @@ Sólo disponible en conversaciones privadas. Envía tu ubicación o cualquiera e
 🌈 *¿Bot libre?* 🌈
 
 Este bot es _libre_, esto quiere decir que el código está a tu disposición para examinarlo, hacer una copia y mejorarla. Consulta con más detalle la licencia [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
-¿Porqué es esto importante para tí? Este tipo de bots procesa *todos* los mensajes de los grupos en los que se encuentra. Si no te fías, haces bien, y por eso mismo existe este bot que al ser libre demuestra un uso lícito de toda información procesada. 
+¿Porqué es esto importante para ti? Este tipo de bots procesa *todos* los mensajes de los grupos en los que se encuentra. Si no te fías, haces bien, y por eso mismo existe este bot que al ser libre demuestra un uso lícito de toda información procesada. 
 
 Estoy disponible en https://github.com/Jujuyeh/polebot.
 `;
