@@ -49,6 +49,57 @@ const coResponses = [
     "jan",
 ];
 
+// Help message
+const help = `
+ℹ️ℹ️ℹ️ *Auyda con Polebot* ℹ️ℹ️ℹ️
+
+Con este bot podrás jugar a la _pole_, añádelo a un grupo para jugar. También te permite consultar diferentes servicios de Zaragoza, como tiempos de paso de buses, tranvía y más.
+
+
+🎲 Pole 🎲
+
+Todos los días, a partir de las 00:00, se inicia una nueva partida de _Pole_. Compite con tus amigos por ser el primero en decir "pole" y suma puntos en el ránking. Estos son los puestos por los que se compiten (en el orden mencionado):
+
+- '\`pole\`' u '\`oro\`': 3 puntos
+- '\`subpole\`' o '\`plata\`': 1 punto
+- '\`fail\`' o '\`bronce\`': 0,5 puntos
+
+Puedes consultar el puntuaje actual con \`ranking\`.
+
+
+🗺 *Tiempos de bus* 🗺
+
+Consulta los tiempos de paso de los Urbanos de Zaragoza dado el número de poste. Usa \`/busXXXX\` donde _XXXX_ es el número de poste.
+Ejemplo: /bus340
+
+Consejo: Puedes pulsar la orden ya escrita, no hace falta que vuelvas a escribirla.
+
+
+🗺 *Tiempos de tranvía* 🗺
+
+Consulta los tiempos de paso del Tranvía de Zaragoza dado un nombre de parada, o parte de éste. Usa \`/tram XXXX\` donde _XXXX_ es un filtro de búsqueda. Si no se provee de ningún filtro de búsqueda, se devolverá una lista con todas las paradas.
+Ejemplo: \`/tram españa\`
+
+
+🗺 *Servicios de ubicación* 🗺
+
+Sólo disponible en conversaciones privadas. Envía tu ubicación o cualquiera en Zaragoza, y un menú te permitirá buscar el punto de interés más cercano a dicha ubicación. Actualmente se pueden consultar:
+
+📍 Parada de autobús más cercana.
+📍 Parada de tranvía más cercana.
+📍 Estación de Bizi más cercana.
+📍 Farmacia más cercana.
+📍 Todas las fuentes de agua disponibles a menos de 250 metros.
+
+
+🌈 *¿Bot libre?* 🌈
+
+Este bot es _libre_, esto quiere decir que el código está a tu disposición para examinarlo, hacer una copia y mejorarla. Consulta con más detalle la licencia [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+¿Porqué es esto importante para tí? Este tipo de bots procesa *todos* los mensajes de los grupos en los que se encuentra. Si no te fías, haces bien, y por eso mismo existe este bot que al ser libre demuestra un uso lícito de toda información procesada. 
+
+Estoy disponible en https://github.com/Jujuyeh/polebot.
+`;
+
 /* -------------------------------------------------------------------------- */
 /*                                  DATABASE                                  */
 /* -------------------------------------------------------------------------- */
@@ -78,6 +129,10 @@ bot.hears(msg("holi"), (ctx) => {
         ctx.message.chat.id,
         `Holi ${ctx.from.first_name} :D`
     );
+});
+
+bot.hears(msg("ayuda"), (ctx) => {
+    ctx.replyWithMarkdown(help, { reply_to_message_id: ctx.message.message_id });
 });
 
 bot.hears(msg("pole"), (ctx) => {
