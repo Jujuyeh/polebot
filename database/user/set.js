@@ -54,7 +54,7 @@ export async function setParty(id, newstatus, newdate) {
     });
 }
 
-export async function score(username, chat, value) {
+export async function score(username, chat, value, newdate) {
     return new Promise(async (resolve, _) => {
         const filter = {
             username: username,
@@ -71,6 +71,7 @@ export async function score(username, chat, value) {
             $inc: {
                 score: value,
             },
+            last_set: new Date(newdate * 1000),
         };
 
         return resolve(await User.findOneAndUpdate(filter, update));
