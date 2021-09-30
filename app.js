@@ -6,8 +6,8 @@
  */
 
 /* --------------------------------- IMPORTS -------------------------------- */
-import { Telegraf as _Telegraf } from "telegraf";
-import { MenuTemplate, MenuMiddleware } from "telegraf-inline-menu";
+import { Bot, InputFile } from "grammy";
+import { MenuTemplate, MenuMiddleware } from "grammy-inline-menu";
 
 import pkg from "mongoose";
 const { connect } = pkg;
@@ -18,9 +18,6 @@ import {
     bronce,
     addParty,
     ranking,
-    msg,
-    endWord,
-    word,
     getBusTimes,
     getTramTimes,
     getNearBusTimes,
@@ -100,6 +97,18 @@ Este bot es _libre_, esto quiere decir que el código está a tu disposición pa
 Estoy disponible en https://github.com/Jujuyeh/polebot.
 `;
 
+const rePole =      /^pole|oro$/i;
+const reSubpole =   /^subpole|plata$/i;
+const reFail =      /^fail|bronce$/i;
+const reHoli =      /^holi$/i;
+const reHelp =      /^help|ayuda$/i;
+const reRanking =   /^ranking$/i;
+const reCo =        /co$/i;
+const reSara =      /^sa+ra+$/i;
+const reBus =       /^\/bus\d+$/;
+const reTram =      /^\/tram/;
+
+
 /* -------------------------------------------------------------------------- */
 /*                                  DATABASE                                  */
 /* -------------------------------------------------------------------------- */
@@ -117,57 +126,39 @@ connect(
 /*                                     BOT                                    */
 /* -------------------------------------------------------------------------- */
 
-const bot = new _Telegraf(process.env.BOT_TOKEN);
+const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.command("start", (ctx) => {
     addParty(ctx);
-    bot.telegram.sendMessage(ctx.message.chat.id, "¡Olé!");
+    ctx.reply("¡Olé!");
 });
 
-bot.hears(msg("holi"), (ctx) => {
-    ctx.telegram.sendMessage(
-        ctx.message.chat.id,
-        `Holi ${ctx.from.first_name} :D`
-    );
+bot.hears(reHoli, (ctx) => {
+    ctx.reply(`Holi ${ctx.from.first_name} :D`);
 });
 
-bot.hears(msg("ayuda"), (ctx) => {
-    ctx.replyWithMarkdown(help, { reply_to_message_id: ctx.message.message_id });
+bot.command("ayuda", (ctx) => {
+    ctx.reply(help, {
+        reply_to_message_id: ctx.message.message_id,
+        parse_mode: "Markdown",
+    });
 });
 
-bot.hears(msg("pole"), (ctx) => {
-    pole(ctx);
+bot.command("help", (ctx) => {
+    ctx.reply(help, {
+        reply_to_message_id: ctx.message.message_id,
+        parse_mode: "Markdown",
+    });
 });
 
-bot.hears(msg("oro"), (ctx) => {
-    pole(ctx);
-});
+bot.hears(rePole, (ctx) => pole(ctx));
+bot.hears(reSubpole, (ctx) => subpole(ctx));
+bot.hears(reFail, (ctx) => bronce(ctx));
+bot.hears(reRanking, (ctx) => ranking(ctx));
 
-bot.hears(msg("subpole"), (ctx) => {
-    subpole(ctx);
-});
-
-bot.hears(msg("plata"), (ctx) => {
-    subpole(ctx);
-});
-
-bot.hears(msg("bronce"), (ctx) => {
-    bronce(ctx);
-});
-
-bot.hears(msg("fail"), (ctx) => {
-    bronce(ctx);
-});
-
-bot.hears(msg("ranking"), (ctx) => {
-    ranking(ctx);
-});
-
-bot.hears(endWord("co"), (ctx) => {
-    if (ctx.message.text.match(msg("co"))) {
-        ctx.replyWithVoice({
-            source: "./assets/cacola.mp3",
-        });
+bot.hears(reCo, (ctx) => {
+    if (ctx.message.text.match(/^co$/i)) {
+        ctx.replyWithVoice(new InputFile("./assets/cacola.mp3"));
     } else {
         let randomResponse =
             coResponses[Math.round(Math.random() * (coResponses.length - 1))];
@@ -177,26 +168,17 @@ bot.hears(endWord("co"), (ctx) => {
     }
 });
 
-bot.hears(word("pilarica"), (ctx) => {
-    ctx.reply("🤮", { reply_to_message_id: ctx.message.message_id });
-});
-
-bot.hears(/^[Ss][Aa]+[Rr][Aa]+$/, (ctx) => {
-    let firstChar = ctx.message.text.match(/[Ss][Aa]+/)[0].length - 1;
-    let secondChar = ctx.message.text.match(/[Rr][Aa]+/)[0].length - 1;
+bot.hears(reSara, (ctx) => {
+    let firstChar = ctx.message.text.match(/sa+/i)[0].length - 1;
+    let secondChar = ctx.message.text.match(/ra+/i)[0].length - 1;
     const charO = "o";
     const charA = "a";
     let response = `g${"o".repeat(firstChar)}s${"a".repeat(secondChar)}`;
     ctx.reply(response, { reply_to_message_id: ctx.message.message_id });
 });
 
-bot.hears(/bus[0-9]+/, (ctx) => {
-    getBusTimes(ctx);
-});
-
-bot.hears(/\/tram/, (ctx) => {
-    getTramTimes(ctx);
-});
+bot.hears(reBus, (ctx) => getBusTimes(ctx));
+bot.hears(reTram, (ctx) => getTramTimes(ctx));
 
 /* -------------------------------- LOCATION -------------------------------- */
 const menuTemplate = new MenuTemplate((_) => `Buscar cerca de esa ubicación:`);
@@ -230,7 +212,7 @@ bot.on("message", (ctx) => {
 bot.use(menuMiddleware);
 
 /* -------------------------------------------------------------------------- */
-bot.startPolling();
+bot.start();
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
