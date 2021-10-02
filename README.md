@@ -8,14 +8,15 @@ Deploy
 
 You can either run the bot directly from a host or running a Docker container:
 
-### Docker
+### Docker Compose
 
 ```sh
-docker build -t polebot .
-docker run --env-file=.env -d polebot
+docker-compose up -d
 ```
 
 ### Manual deploy on host
+
+Set the environment viariables from the `.env` file.
 
 Install node.js and run:
 
