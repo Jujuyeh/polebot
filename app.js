@@ -25,6 +25,7 @@ import {
     getNearBike,
     getNearPharmacy,
     getNearWater,
+    getWeather,
     setLoc,
 } from "./lib/index.js";
 
@@ -97,16 +98,17 @@ Este bot es _libre_, esto quiere decir que el código está a tu disposición pa
 Estoy disponible en https://github.com/Jujuyeh/polebot.
 `;
 
-const rePole =      /^pole|oro$/i;
-const reSubpole =   /^subpole|plata$/i;
-const reFail =      /^fail|bronce$/i;
+const rePole =      /^pole$|^oro$/i;
+const reSubpole =   /^subpole$|^plata$/i;
+const reFail =      /^fail$|^bronce$/i;
 const reHoli =      /^holi$/i;
-const reHelp =      /^help|ayuda$/i;
+const reHelp =      /^\/help$|^\/ayuda$/i;
 const reRanking =   /^ranking$/i;
-const reCo =        /co$/i;
+const reCo =        /\bco$/i;
 const reSara =      /^sa+ra+$/i;
 const reBus =       /^\/bus\d+$/;
 const reTram =      /^\/tram/;
+const reWeather =   /^\/tiempo/;
 
 
 /* -------------------------------------------------------------------------- */
@@ -179,6 +181,7 @@ bot.hears(reSara, (ctx) => {
 
 bot.hears(reBus, (ctx) => getBusTimes(ctx));
 bot.hears(reTram, (ctx) => getTramTimes(ctx));
+bot.hears(reWeather, (ctx) => getWeather(ctx));
 
 /* -------------------------------- LOCATION -------------------------------- */
 const menuTemplate = new MenuTemplate((_) => `Buscar cerca de esa ubicación:`);
